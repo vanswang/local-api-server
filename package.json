@@ -1,0 +1,16 @@
+{
+    "scripts": {
+        "api": "node ./local-api-server.js"
+    },
+    "name": "local-api-server",
+    "version": "1.0.0",
+    "main": "local-api-server.js",
+    "dependencies": {
+        "express": "^4.17.1",
+        "uuid": "^3.3.3"
+    },
+    "devDependencies": {},
+    "author": "",
+    "license": "ISC",
+    "description": ""
+}

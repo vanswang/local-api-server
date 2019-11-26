@@ -1,0 +1,8 @@
+prod/*
+dev/*
+node_modules/
+npm-debug.log
+.idea/*
+.awcache
+.DS_Store
+**/*.css
