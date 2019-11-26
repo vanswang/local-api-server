@@ -6,19 +6,41 @@ const express = require('express'),
     server = http.createServer(app),
     bodyParser = require('body-parser');
 
-var test, data;
+const debugDataInfo = [
+    {
+        dataName: 'getTestData',
+        fileName: 'test'
+    },
+    {
+        dataName: 'test1',
+        fileName: 'test1'
+    },
+    {
+        dataName: 'test2',
+        fileName: 'test2'
+    }
+];
+
+const allFileName = debugDataInfo.map(info => info.fileName);
+
+var data = {};
 
 function initDebugData() {
-    delete require.cache[require.resolve('./data/test.json')];
+    console.log('deleting require cache...');
+    allFileName.forEach(
+        fileName =>
+            delete require.cache[require.resolve(`./data/${fileName}.json`)]
+    );
 }
 
 function loadDebugData() {
     initDebugData();
 
-    test = require('./data/test.json');
-    data = {
-        test: test
-    };
+    debugDataInfo.forEach(dataInfo => {
+        data[dataInfo.dataName] = require(`./data/${dataInfo.fileName}.json`);
+    });
+
+    console.log(data);
 }
 
 function ok(something) {
@@ -47,19 +69,23 @@ app.get('/api/download', req => {
 app.all('*', (req, res, next) => {
     let date = new Date();
     console.log(date.toLocaleString());
-    console.log(req.query);
+    console.log(`Request-URL: ${req.url}`);
+    console.log(`Request-Method: ${req.method}`);
     console.log(`X-Feature-Path: ${req.header('X-Feature-Path')}`);
+    console.log(
+        '------------------------------------------------------------------------------'
+    );
     return next();
 });
 
 app.all('*', async (req, res, next) => {
     const url = req.url,
-        method = req.method; // GET POST PUT DELETE
+        method = req.method; // GET POST PUT DELETE...
     switch (url) {
-        case '/Insurance/test': {
+        case '/getTestData': {
             console.log(method);
             if (method === 'GET') {
-                return res.json(ok('test')).end();
+                return res.json(ok(data.getTestData)).end();
             } else {
                 return res
                     .json(
@@ -70,8 +96,11 @@ app.all('*', async (req, res, next) => {
                     .end();
             }
         }
-        case '/Insurance/test1': {
-            return res.json(ok(data.test)).end();
+        case '/test1': {
+            return res.json(ok(data.test1)).end();
+        }
+        case '/test2': {
+            return res.json(ok(data.test2)).end();
         }
         default:
             return next();
@@ -83,6 +112,9 @@ function start() {
     server.listen(8899, () => {
         console.log(`api @ 8899`);
         console.log(`press enter to reset data to initial state`);
+        console.log(
+            '------------------------------------------------------------------------------'
+        );
     });
 }
 
