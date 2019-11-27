@@ -69,7 +69,8 @@ app.get('/api/download', req => {
 app.all('*', (req, res, next) => {
     let date = new Date();
     console.log(date.toLocaleString());
-    console.log(`Request-URL: ${req.url}`);
+    console.log(`Request-URL(No Params): ${req.url.split('?')[0]}`);
+    console.log('Request-Params:', req.query);
     console.log(`Request-Method: ${req.method}`);
     console.log(`X-Feature-Path: ${req.header('X-Feature-Path')}`);
     console.log(
@@ -79,8 +80,9 @@ app.all('*', (req, res, next) => {
 });
 
 app.all('*', async (req, res, next) => {
-    const url = req.url,
-        method = req.method; // GET POST PUT DELETE...
+    const url = req.url.split('?')[0],
+        method = req.method,
+        params = req.query; // GET POST PUT DELETE...
     switch (url) {
         case '/getTestData': {
             console.log(method);
